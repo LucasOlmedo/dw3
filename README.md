@@ -52,3 +52,6 @@ php artisan migrate --seed
 ```bash
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 ```
+
+8. Após a configuração, acesse a documentação da aplicação local
+> ``http://localhost:8080/docs``
