@@ -40,12 +40,12 @@ composer install
 
 5. Após a instalação dos pacotes, gere a chave Laravel e adicione o arquivo `.env`. Após adicioná-lo, configure as chaves de Banco de Dados do seu ambiente:
 ```bash
-php artisan key:generate && cp .env.example .env
+cp .env.example .env && php artisan key:generate
 ```
 
 6. Execute as `migrations` e `seeds` para configurar e popular o Banco de Dados. Caso ocorra algum erro, confira se a configuração no `.env` está correta, ou se o contêiner do `mysql` está ativo:
 ```bash
-php artisan migrate --seed
+php artisan migrate:fresh --seed
 ```
 
 7. Por último, ajuste as permissões dos diretórios `storage` e `bootstrap/cache`:
