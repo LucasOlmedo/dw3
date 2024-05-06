@@ -1,0 +1,332 @@
+openapi: 3.0.0
+info:
+  title: Documentação da API de Produtos
+  version: 1.0.0
+  description: Documentação da API de Produtos para gerenciamento de produtos.
+servers:
+  - url: http://localhost:8080/api
+    description: Local Development Server
+tags:
+  - name: Desafios
+    description: Rotas para os desafios matemáticos 1 e 2.
+  - name: Produtos
+    description: API Rest para gerenciamento de produtos.
+paths:
+  /math/challenge-1:
+    post:
+      tags:
+        - Desafios
+      summary: Desafio 1
+      description: "Desafio 1: Encontrar Três Números Consecutivos que Somam um Valor Específico"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - numbersArray
+                - targetSum
+              properties:
+                numbersArray:
+                  type: array
+                  example: [2,2,6,1,7,3]
+                targetSum:
+                  type: integer
+                  example: 10
+      responses:
+        '200':
+          description: Resultado mostrando o array de soma
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: array
+                    description: "Retorna um array contendo as combinações encontradas,
+  mostrando os índices dos três números e sua soma correspondente."
+                    items:
+                      example: [ "2 + 2 + 6 = 10" ]
+        '422':
+          description: Erros de validação no corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MathInputError"
+  /math/challenge-2:
+    post:
+      tags:
+        - Desafios
+      summary: Desafio 2
+      description: "Desafio 2: Encontrar um Único Número que Não Ocorre Duas Vezes na Matriz"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - numbersArray
+              properties:
+                numbersArray:
+                  type: array
+                  example: [ 2,2,6,1,7,6 ]
+      responses:
+        '200':
+          description: Resultado mostrando itens que só aparecem uma vez
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+                    description: "Retorna um array contendo todos os números da matriz,
+incluindo o número único encontrado."
+                    properties:
+                      input:
+                        type: array
+                        example: [ 2,2,6,1,7,6 ]
+                      single:
+                        type: string
+                        example: "1,7"
+        '422':
+          description: Erros de validação no corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MathInputError"
+  /products:
+    get:
+      tags:
+        - Produtos
+      summary: Lista de produtos
+      description: Retorna uma lista contendo todos os produtos no banco de dados.
+      responses:
+        '200':
+          description: Lista de produtos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/ProductList'
+    post:
+      tags:
+        - Produtos
+      summary: Cria um novo produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/ProductModel'
+        '422':
+          description: Erros de validação no corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InputError"
+  /products/{id}:
+    get:
+      tags:
+        - Produtos
+      summary: Detalhes de um produto específico
+      parameters:
+        - in: path
+          name: id
+          description: ID do produto a ser retornado
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Detalhes do produto retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/ProductModel'
+        '404':
+          description: O registro não foi encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+    put:
+      tags:
+        - Produtos
+      summary: Atualiza os detalhes de um produto existente
+      parameters:
+        - in: path
+          name: id
+          description: ID do produto a ser atualizado
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: '#/components/schemas/ProductModel'
+        '404':
+          description: O registro não foi encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '422':
+          description: Erros de validação no corpo da requisição
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InputError"
+    delete:
+      tags:
+        - Produtos
+      summary: Exclui um produto existente
+      parameters:
+        - in: path
+          name: id
+          description: ID do produto a ser excluído
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Produto excluído com sucesso
+        '404':
+          description: O registro não foi encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+components:
+  schemas:
+    ProductList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductModel'
+    ProductInput:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+          example: Produto A
+        description:
+          type: string
+          example: Descrição do Produto A
+        price:
+          type: number
+          format: float
+          example: 99.99
+    InputError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Verifique os campos e tente novamente"
+        errors:
+          type: object
+          example:
+            - name: "Field required"
+            - price: "Field required"
+    MathInputError:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        message:
+          type: string
+          example: "Verifique os campos e tente novamente"
+        errors:
+          type: object
+          example:
+            - numbersArray: "Field required"
+    ProductModel:
+      type: object
+      properties:
+        id:
+          description: ID do produto
+          type: integer
+          example: 1
+        name:
+          description: Nome do produto
+          type: string
+          example: Produto A
+        description:
+          description: Descrição do produto
+          type: string
+          example: Descrição do Produto A
+        price:
+          description: Preço do produto
+          type: number
+          format: float
+          example: 99.99
+        created_at:
+          description: Data de criação do produto
+          type: string
+          format: date-time
+          example: "2024-01-01 00:00:00"
+    NotFound:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        message:
+          type: string
+          example: "Produto não encontrado"

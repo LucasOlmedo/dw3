@@ -7,3 +7,7 @@ Route::get('/', function () {
         'index' => true
     ]);
 });
+
+Route::get('/docs', function () {
+    return view('swagger.index');
+});

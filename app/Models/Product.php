@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  *
+ * @method static findOrFail($id)
+ * @method static create($data)
  */
 class Product extends Model
 {
